@@ -1,14 +1,11 @@
 import logging
+import os
 
 import azure.functions as func
+import httpx
 
 
-OPERATIONS = {
-    "-": lambda x, y: x - y,
-    "+": lambda x, y: x + y,
-    "*": lambda x, y: x * y,
-    "/": lambda x, y: x / y,
-}
+ENDPOINT = os.environ["ENDPOINT"]
 
 
 def main(documents: func.DocumentList):
@@ -17,30 +14,9 @@ def main(documents: func.DocumentList):
 
     for document in documents:
         logging.info("Document: %s", document["id"])
+
         for key, value in document.items():
-            logging.info("    %s: %s", key, value)
+            logging.debug("    %s: %s", key, value)
 
-        try:
-            num1 = document["num1"]
-            num2 = document["num2"]
-            operation = document["operation"]
-        except KeyError:
-            logging.error("Missing one or more required fields")
-            continue
-
-        try:
-            operator = OPERATIONS[operation]
-        except KeyError:
-            logging.error("Unhandled operation %s", operation)
-            continue
-
-        result = operator(num1, num2)
-
-        logging.info(
-            "%s: %s %s %s = %s",
-            document["id"],
-            num1,
-            operation,
-            num2,
-            result,
-        )
+        logging.info("Making request to %s", ENDPOINT)
+        httpx.post(ENDPOINT, json=dict(document.items()))
