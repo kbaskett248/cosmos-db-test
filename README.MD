@@ -4,6 +4,9 @@ A simple example of using CosmosDB change feed to trigger a function.
 
 This example calls an endpoint, defined in the `ENDPOINT` environment variable, whenever a document is changed.
 
+This also includes an example of a Timer Trigger and an Http Trigger function calling common code defined in the `shared` module.
+The common code logs an info message. The Http Trigger accepts a `name` parameter you can use to personalize the log message.
+
 ## Setup
 
 Deploy the app to Azure. Then [configure the following settings](https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings?tabs=portal).
