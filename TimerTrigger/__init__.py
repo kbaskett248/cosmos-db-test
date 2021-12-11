@@ -1,6 +1,4 @@
 import datetime
-import logging
-
 import azure.functions as func
 from HttpTrigger import MESSAGE_TEMPLATE
 
