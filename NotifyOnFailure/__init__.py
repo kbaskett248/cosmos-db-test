@@ -2,7 +2,7 @@ import logging
 import os
 
 import azure.functions as func
-import httpx
+import requests
 
 
 ENDPOINT = os.environ["ENDPOINT"]
@@ -19,4 +19,4 @@ def main(documents: func.DocumentList):
             logging.debug("    %s: %s", key, value)
 
         logging.info("Making request to %s", ENDPOINT)
-        httpx.post(ENDPOINT, json=dict(document.items()))
+        requests.post(ENDPOINT, json=dict(document.items()))
