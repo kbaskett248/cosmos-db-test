@@ -4,8 +4,22 @@ A simple example of using CosmosDB change feed to trigger a function.
 
 This example calls an endpoint, defined in the `ENDPOINT` environment variable, whenever a document is changed.
 
-This also includes an example of a Timer Trigger and an Http Trigger function calling common code defined in the `shared` module.
-The common code logs an info message. The Http Trigger accepts a `name` parameter you can use to personalize the log message.
+This also includes an example of a Timer Trigger and an Http Trigger function both calling `shared.process_trigger`.
+This function accepts a number of arguments.
+The Http Trigger allows you to specify values for the arguments using query parameters or a JSON body.
+You can specify the following arguments:
+
+* `recipient`
+* `subject`
+* `message_template`
+
+The Timer Trigger has no way to specify arguments and uses defaults. 
+The Http Trigger will also use these defaults if not specified in the request.
+You can specify these default arguments by configuring the following settings:
+
+* `DEFAULT_RECIPIENT`: You must configure a value for this setting.
+* `DEFAULT_SUBJECT`: If no value is configured for this setting, "New event" will be used.
+* `DEFAULT_MESSAGE_TEMPLATE`: If no value is configured for this setting, a default message is used.
 
 ## Setup
 
@@ -14,6 +28,13 @@ Deploy the app to Azure. Then [configure the following settings](https://docs.mi
 * `AzureWebJobsStorage`: A connection string for the Azure Storage account to use with this Function.
 * `ConnectionString`: The CosmosDB connection string for the database you want to monitor.
 * `ENDPOINT`: An endpoint to make a request to when a document is updated. A POST request will be made to this endpoint.
+* `DEFAULT_RECIPIENT`: The default recipient address for the message.
+* `DEFAULT_SUBJECT`: The default subject for the message.
+* `DEFAULT_MESSAGE_TEMPLATE`: The default message template for the message. This should be a `format`-compatible string. It will be formatted with the following keys:
+   * `recipient`
+   * `subject`
+   * `current_time`
+   * `source`
 
 ## Local Setup
 
@@ -38,12 +59,16 @@ For this to work locally, follow these steps.
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "python",
     "ConnectionString": "",
-    "ENDPOINT": ""
+    "ENDPOINT": "",
+    "DEFAULT_RECIPIENT": "",
+    "DEFAULT_SUBJECT": "",
+    "DEFAULT_MESSAGE_TEMPLATE": ""
   }
 }
 ```
 5. Copy the connection string from CosmosDB (or the CosmosDB Emulator) and use it for the `ConnectionString` value.
 6. Enter the endpoint which the function should make a request to for the `ENDPOINT` value.
+7. Populate values for the default values. 
 7. Use F5 in VSCode to launch the function.
 8. Add a new document, or update an existing document in CosmosDB (or the emulator). This should trigger the function to run and log information to the console in VSCode. It should also make a POST request to the endpoint you specified.
 
